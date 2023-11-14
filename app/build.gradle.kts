@@ -93,4 +93,12 @@ dependencies {
 	androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 	debugImplementation("androidx.compose.ui:ui-tooling")
 	debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+
+	// Rest client
+	implementation("com.squareup.okhttp3:okhttp:${rootProject.extra["okHttpversion"]}")
+	implementation("com.squareup.retrofit2:retrofit:${rootProject.extra["retrofitVersion"]}")
+	implementation("com.squareup.okhttp3:logging-interceptor:${rootProject.extra["okHttpversion"]}")
+	implementation("com.squareup.retrofit2:adapter-rxjava2:${rootProject.extra["retrofitVersion"]}")
+	implementation("com.squareup.retrofit2:converter-gson:${rootProject.extra["retrofitVersion"]}")
 }
