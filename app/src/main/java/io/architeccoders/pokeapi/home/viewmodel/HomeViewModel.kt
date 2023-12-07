@@ -1,5 +1,6 @@
 package io.architeccoders.pokeapi.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,8 +19,14 @@ class HomeViewModel(
 	fun getInitialData() {
 		viewModelScope.launch {
 			when (val result = repository.loadPokemonList()) {
-				is Result.Success -> pokemonListMLD.postValue(result.data)
-				is Result.Error -> pokemonListMLD.postValue(emptyList())
+				is Result.Success -> {
+					pokemonListMLD.postValue(result.data.results)
+					Log.d("HomeViewModel", "getInitialData: ${result.data}")
+				}
+
+				is Result.Error -> {
+					pokemonListMLD.postValue(emptyList())
+				}
 			}
 		}
 	}
