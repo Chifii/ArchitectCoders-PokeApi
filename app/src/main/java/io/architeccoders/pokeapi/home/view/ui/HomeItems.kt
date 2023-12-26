@@ -19,25 +19,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.architeccoders.pokeapi.R
+import coil.compose.rememberImagePainter
+import io.architeccoders.pokeapi.home.model.Pokemon
+import io.architeccoders.pokeapi.utils.PokemonTypes
+import java.util.Locale
 
 @Composable
 fun HomeItems(
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	pokemon: Pokemon
 ) {
+	val pokemonTypeColor = Color(
+		android.graphics.Color.parseColor(
+			PokemonTypes.typeColors[pokemon.types.first().type.name] ?: "#FFFFFF"
+		)
+	)
+
 	Card(
 		modifier = modifier
 			.width(250.dp)
-			.height(170.dp)
-			.padding(2.dp),
+			.height(150.dp)
+			.padding(6.dp),
 		colors = CardDefaults.cardColors(
-			containerColor = Color.Green,
+			containerColor = pokemonTypeColor,
 			contentColor = Color.White
 		)
 	) {
@@ -51,8 +59,12 @@ fun HomeItems(
 					.padding(6.dp)
 			) {
 				Text(
-					text = "Bulbasaur",
-					modifier = modifier,
+					text = pokemon.name.replaceFirstChar {
+						if (it.isLowerCase()) it.titlecase(
+							Locale.getDefault()
+						) else it.toString()
+					},
+					modifier = modifier.padding(start = 4.dp),
 					fontStyle = FontStyle.Normal,
 					fontSize = 24.sp,
 					fontWeight = FontWeight.Bold
@@ -60,54 +72,40 @@ fun HomeItems(
 				Column(
 					modifier = modifier
 						.align(Alignment.Start),
-					verticalArrangement = Arrangement.SpaceEvenly,
-					horizontalAlignment = Alignment.Start
+					verticalArrangement = Arrangement.SpaceEvenly
 				) {
-					OutlinedCard(
-						modifier = modifier
-							.width(IntrinsicSize.Max),
-						colors = CardDefaults.outlinedCardColors(
-							containerColor = Color.LightGray,
-							contentColor = Color.White
-						),
-						border = CardDefaults.outlinedCardBorder(false),
-					) {
-						Text(
-							text = "Grass",
+					pokemon.types.forEach { type ->
+						OutlinedCard(
 							modifier = modifier
-								.width(56.dp)
-								.padding(start = 8.dp, end = 8.dp, top = 2.dp, bottom = 2.dp)
-								.align(Alignment.CenterHorizontally),
-							fontStyle = FontStyle.Normal,
-							fontSize = 12.sp,
-						)
-					}
-					OutlinedCard(
-						modifier = modifier
-							.width(IntrinsicSize.Max)
-							.padding(top = 2.dp),
-						colors = CardDefaults.outlinedCardColors(
-							containerColor = Color.LightGray,
-							contentColor = Color.White
-						),
-						border = CardDefaults.outlinedCardBorder(false),
-					) {
-						Text(
-							text = "Poison",
-							modifier = modifier
-								.width(56.dp)
-								.padding(start = 8.dp, end = 8.dp, top = 2.dp, bottom = 2.dp)
-								.align(Alignment.CenterHorizontally),
-							fontStyle = FontStyle.Normal,
-							fontSize = 12.sp,
-						)
+								.width(IntrinsicSize.Max)
+								.padding(top = if (type == pokemon.types.first()) 0.dp else 2.dp, start = 4.dp),
+							colors = CardDefaults.outlinedCardColors(
+								containerColor = Color.LightGray,
+								contentColor = Color.White
+							),
+							border = CardDefaults.outlinedCardBorder(false),
+						) {
+							Text(
+								text = type.type.name.replaceFirstChar {
+									if (it.isLowerCase()) it.titlecase(
+										Locale.getDefault()
+									) else it.toString()
+								},
+								modifier = modifier
+									.width(58.dp)
+									.padding(start = 8.dp, end = 8.dp, top = 2.dp, bottom = 2.dp)
+									.align(Alignment.CenterHorizontally),
+								fontStyle = FontStyle.Normal,
+								fontSize = 12.sp,
+							)
+						}
 					}
 				}
 			}
 
 			Image(
-				painter = painterResource(id = R.drawable.ic_launcher_background),
-				contentDescription = "Bulbasaur",
+				painter = rememberImagePainter(data = pokemon.sprites.frontDefault),
+				contentDescription = pokemon.name,
 				modifier = modifier
 					.size(120.dp)
 					.padding(8.dp)
@@ -115,10 +113,4 @@ fun HomeItems(
 			)
 		}
 	}
-}
-
-@Preview
-@Composable
-fun HomeItemsPreview() {
-	HomeItems()
 }
