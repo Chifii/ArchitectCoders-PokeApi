@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import io.architeccoders.pokeapi.databinding.ActivityHomeBinding
 import io.architeccoders.pokeapi.home.repository.HomeRepositoryImpl
 import io.architeccoders.pokeapi.home.view.ui.HomeScreen
-import io.architeccoders.pokeapi.home.viewmodel.HomeViewModel
+import io.architeccoders.pokeapi.home.viewModel.HomeViewModel
 
 class HomeActivity : AppCompatActivity() {
 

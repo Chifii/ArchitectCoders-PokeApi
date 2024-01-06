@@ -1,4 +1,4 @@
-package io.architeccoders.pokeapi.home.viewmodel
+package io.architeccoders.pokeapi.home.viewModel
 
 import android.util.Log
 import androidx.lifecycle.LiveData

@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.architeccoders.pokeapi.home.repository.HomeRepositoryImpl
-import io.architeccoders.pokeapi.home.viewmodel.HomeViewModel
+import io.architeccoders.pokeapi.home.viewModel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
