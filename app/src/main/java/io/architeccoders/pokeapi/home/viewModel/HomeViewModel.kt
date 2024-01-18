@@ -9,7 +9,11 @@ import io.architeccoders.pokeapi.home.model.Pokemon
 import io.architeccoders.pokeapi.home.model.PokemonBase
 import io.architeccoders.pokeapi.home.repository.HomeRepositoryImpl
 import io.architeccoders.pokeapi.utils.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeViewModel(
 	private val repository: HomeRepositoryImpl
@@ -22,7 +26,7 @@ class HomeViewModel(
 	var offset = 0
 
 	fun getInitialData() {
-		viewModelScope.launch {
+		viewModelScope.launch(Dispatchers.IO) {
 			when (val result = repository.loadInitialPokemonList(offset)) {
 				is Result.Success -> {
 					pokemonInitialList = result.data.results
@@ -40,24 +44,26 @@ class HomeViewModel(
 	}
 
 	private fun getPokemonList() {
-		var pokemonFinalList: List<Pokemon> = mutableListOf()
-		viewModelScope.launch {
-			for (pokemon in pokemonInitialList) {
-				Log.d("HomeViewModel", "getPokemonList: ${pokemon.name}")
-				when (val result =
-					repository.loadPokemonData(pokemonInitialList.indexOf(pokemon) + 1)) {
-					is Result.Success -> {
-						Log.d("HomeViewModel", "getPokemonList: ${result.data}")
-						pokemonFinalList += result.data
-					}
+		viewModelScope.launch(Dispatchers.IO) {
+			val jobs = pokemonInitialList.map { pokemon ->
+				async {
+					when (val result =
+						repository.loadPokemonData(pokemonInitialList.indexOf(pokemon) + 1)) {
+						is Result.Success -> {
+							Log.d("HomeViewModel", "getPokemonList: ${result.data}")
+							result.data
+						}
 
-					is Result.Error -> {
-						pokemonListMLD.postValue(emptyList())
+						is Result.Error -> null
 					}
 				}
 			}
 
-			pokemonListMLD.postValue(pokemonFinalList)
+			val pokemonFinalList = jobs.awaitAll().filterNotNull()
+
+			withContext(Dispatchers.Main) {
+				pokemonListMLD.postValue(pokemonFinalList)
+			}
 		}
 	}
 }
